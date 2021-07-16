@@ -37,7 +37,7 @@ app.post('/signup', celebrate({
 
 app.use(auth);
 
-app.use('/me', require('./routes/users'));
+app.use('/users', require('./routes/users'));
 app.use('/movies', require('./routes/movies'));
 
 app.use((req, res, next) => {

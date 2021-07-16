@@ -56,6 +56,8 @@ module.exports.removeUserMovie = (req, res, next) => {
         next(error);
       }
       else {
+        console.log(movie.owner);
+        console.log(req.user._id);
         if (String(movie.owner) !== String(req.user._id)) {
           const error = new Error('403 — Недостаточно прав.');
           error.statusCode = 403;
