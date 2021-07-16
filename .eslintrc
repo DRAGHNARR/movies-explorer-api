@@ -1,0 +1,13 @@
+/*eslint no-underscore-dangle: ["error", { "allow": ["_id"] }]*/
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "consistent-return": "off",
+    "no-lonely-if": "off",
+    "no-useless-escape": "off",
+    "object-curly-newline": "off",
+    "no-param-reassign": "off",
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "brace-style": [2, "stroustrup", { "allowSingleLine": true }]
+  }
+}
