@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    const error = new Error('401 - Необходима авторизация.');
+    const error = new Error('Необходима авторизация.');
     error.statusCode = 401;
     next(error);
     return;
@@ -21,11 +21,14 @@ module.exports = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
-  }
-  catch (err) {
-    const error = new Error('401 — Необходима авторизация.');
-    error.statusCode = 401;
-    next(error);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      const error = new Error('Необходима авторизация.');
+      error.statusCode = 401;
+      next(error);
+    } else {
+      next(err);
+    }
     return;
   }
 

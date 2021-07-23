@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -31,30 +32,24 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => {
-        const regex = /(https*\:\/\/(www\.){0,1})[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*|(www\.[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*)/i;
-        return regex.test(v);
-      },
+      validator: (v) => validator.isURL(v),
+      message: 'Некорректная ссылка.',
     },
   },
   trailer: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => {
-        const regex = /(https*\:\/\/(www\.){0,1})[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*|(www\.[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*)/i;
-        return regex.test(v);
-      },
+      validator: (v) => validator.isURL(v),
+      message: 'Некорректная ссылка.',
     },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => {
-        const regex = /(https*\:\/\/(www\.){0,1})[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*|(www\.[\-\.\_\~\:\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=a-z0-9]*)/i;
-        return regex.test(v);
-      },
+      validator: (v) => validator.isURL(v),
+      message: 'Некорректная ссылка.',
     },
   },
   owner: {

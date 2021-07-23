@@ -4,9 +4,13 @@ module.exports.getUserMovies = (req, res, next) => {
   Movie.findMoviesByOwner(req.user._id)
     .then((movies) => res.send({ data: movies }))
     .catch((err) => {
-      err.statusCode = 400;
-      err.message = '400 — Переданы некорректные данные при поиске картины.';
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Недостаточно прав.');
+        error.statusCode = 403;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -41,9 +45,13 @@ module.exports.addUserMovie = (req, res, next) => {
   })
     .then((movie) => res.send({ data: movie }))
     .catch((err) => {
-      err.statusCode = 400;
-      err.message = '400 — Переданы некорректные данные при создании картины.';
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Переданы некорректные данные при создании картины.');
+        error.statusCode = 400;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -51,32 +59,30 @@ module.exports.removeUserMovie = (req, res, next) => {
   Movie.findById(req.params.movieSystemId)
     .then((movie) => {
       if (!movie) {
-        const error = new Error('404 — Картина с указанным _id не найдена.');
+        const error = new Error('Картина с указанным _id не найдена.');
         error.statusCode = 404;
         next(error);
-      }
-      else {
-        console.log(movie.owner);
-        console.log(req.user._id);
-        if (String(movie.owner) !== String(req.user._id)) {
-          const error = new Error('403 — Недостаточно прав.');
-          error.statusCode = 403;
-          next(error);
-        }
-        else {
-          Movie.findByIdAndRemove(req.params.movieSystemId)
-            .then(res.send({ data: movie }))
-            .catch((err) => {
-              err.message = '400 — Картина с указанным _id не найдена.';
-              err.statusCode = 400;
-              next(err);
-            });
-        }
+      } else if (String(movie.owner) !== String(req.user._id)) {
+        const error = new Error('403 — Недостаточно прав.');
+        error.statusCode = 403;
+        next(error);
+      } else {
+        Movie.findByIdAndRemove(req.params.movieSystemId)
+          .then(res.send({ data: movie }))
+          .catch(() => {
+            const error = new Error('Картина с указанным _id не найдена.');
+            error.statusCode = 404;
+            next(error);
+          });
       }
     })
     .catch((err) => {
-      err.message = '400 — Картина с указанным _id не найдена.';
-      err.statusCode = 400;
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Картина с указанным _id не найдена.');
+        error.statusCode = 404;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };

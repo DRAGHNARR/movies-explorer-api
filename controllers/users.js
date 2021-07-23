@@ -15,9 +15,13 @@ module.exports.signin = (req, res, next) => {
       });
     })
     .catch((err) => {
-      err.statusCode = 401;
-      err.message = '401 — Переданы некорректные данные при поиске пользователя';
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Переданы некорректные данные при поиске пользователя.');
+        error.statusCode = 401;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -33,15 +37,18 @@ module.exports.signup = (req, res, next) => {
       });
     })
     .catch((err) => {
+      const error = new Error();
       if (err.name === 'MongoError' && err.code === 11000) {
-        err.statusCode = 409;
-        err.message = '409 — Указанный пользователь уже существует.';
+        error.message = 'Указанный пользователь уже существует.';
+        error.statusCode = 409;
+        next(error);
+      } else if (err.name === 'ValidationError') {
+        error.message = 'Переданы некорректные данные при поиске пользователя.';
+        error.statusCode = 400;
+        next(error);
+      } else {
+        next(err);
       }
-      else {
-        err.statusCode = 400;
-        err.message = '400 — Переданы некорректные данные при заведении пользователя';
-      }
-      next(err);
     });
 };
 
@@ -52,15 +59,18 @@ module.exports.getUserInfo = (req, res, next) => {
         const error = new Error('404 — Пользователь с указанным _id не найден.');
         error.statusCode = 404;
         next(error);
-      }
-      else {
+      } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
-      err.statusCode = 400;
-      err.message = '400 — Переданы некорректные данные при поиске пользователя';
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Переданы некорректные данные при поиске пользователя.');
+        error.statusCode = 400;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -73,14 +83,17 @@ module.exports.setUserInfo = (req, res, next) => {
         const error = new Error('404 — Пользователь с указанным _id не найден.');
         error.statusCode = 404;
         next(error);
-      }
-      else {
+      } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
-      err.statusCode = 400;
-      err.message = '400 — Переданы некорректные данные при обновлении профиля.';
-      next(err);
+      if (err.name === 'ValidationError') {
+        const error = new Error('Переданы некорректные данные при обновлении профиля.');
+        error.statusCode = 400;
+        next(error);
+      } else {
+        next(err);
+      }
     });
 };
