@@ -77,23 +77,32 @@ module.exports.getUserInfo = (req, res, next) => {
 module.exports.setUserInfo = (req, res, next) => {
   const { email, name } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { email, name }, { new: true })
-    .then((user) => {
-      if (!user) {
-        const error = new Error('404 — Пользователь с указанным _id не найден.');
-        error.statusCode = 404;
-        next(error);
+  User.findOne({ email })
+    .then((mailedUser) => {
+      if (!mailedUser) {
+        User.findByIdAndUpdate(req.user._id, { email, name }, { new: true })
+          .then((user) => {
+            if (!user) {
+              const error = new Error('404 — Пользователь с указанным _id не найден.');
+              error.statusCode = 404;
+              next(error);
+            } else {
+              res.send({ data: user });
+            }
+          })
+          .catch((err) => {
+            if (err.name === 'ValidationError') {
+              const error = new Error('Переданы некорректные данные при обновлении профиля.');
+              error.statusCode = 400;
+              next(error);
+            } else {
+              next(err);
+            }
+          });
       } else {
-        res.send({ data: user });
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
         const error = new Error('Переданы некорректные данные при обновлении профиля.');
-        error.statusCode = 400;
+        error.statusCode = 409;
         next(error);
-      } else {
-        next(err);
       }
     });
 };
