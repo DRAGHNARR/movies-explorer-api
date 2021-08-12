@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const errorer = require('./middlewares/errorer');
 
-const { PORT = 3000, HOST = 'mongodb://localhost:27017/ourtube' } = process.env;
+const { PORT = 3001, HOST = 'mongodb://localhost:27017/ourtube' } = process.env;
 const app = express();
 
 mongoose.connect(HOST, {
@@ -19,6 +20,8 @@ mongoose.connect(HOST, {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
+
+app.use(cors());
 
 app.use('/', require('./routes/index'));
 
