@@ -6,7 +6,7 @@
 **Интро**
 Данный проект являет собой фильмотеку пользовательских записей о тех или иных фильмах.
 
-Backend: https://api.ourtube.nomoredomains.work/ - временно недоступен за неуплату. c:
-Frontend: -
+Backend: http://api.ourtube.nomoredomains.work/
+Frontend: http://ourtube.nomoredomains.work/
 
 
