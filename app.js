@@ -17,11 +17,11 @@ mongoose.connect(HOST, {
   useUnifiedTopology: true,
 });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(requestLogger);
+app.use(cors({credentials: true, origin: true}));
 
-app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(requestLogger);
 
 app.use('/', require('./routes/index'));
 
@@ -34,4 +34,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorer);
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => {console.log(123)});

@@ -15,9 +15,9 @@ router.post('/', celebrate({
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Поле "avatar" заполнено некорректно.');
+      return helpers.message('Поле "image" заполнено некорректно.');
     }),
-    trailer: Joi.string().required().custom((value, helpers) => {
+    trailerLink: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
@@ -34,9 +34,9 @@ router.post('/', celebrate({
     movieId: Joi.number().required(),
   }).unknown(true),
 }), addUserMovie);
-router.delete('/:movieSystemId', celebrate({
+router.delete('/:movieId', celebrate({
   params: Joi.object().keys({
-    movieSystemId: Joi.string().hex().required(),
+    movieId: Joi.string().hex().required(),
   }),
 }), removeUserMovie);
 

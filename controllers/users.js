@@ -10,7 +10,7 @@ module.exports.signin = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.send({
+      res.status(200).send({
         token,
       });
     })
@@ -45,6 +45,7 @@ module.exports.signup = (req, res, next) => {
         error.statusCode = 409;
         next(error);
       } else if (err.name === 'ValidationError') {
+        console.log(err);
         error.message = 'Переданы некорректные данные при поиске пользователя.';
         error.statusCode = 400;
         next(error);
@@ -62,7 +63,7 @@ module.exports.getUserInfo = (req, res, next) => {
         error.statusCode = 404;
         next(error);
       } else {
-        res.send({ data: user });
+        res.status(200).send({ data: user });
       }
     })
     .catch((err) => {
@@ -77,11 +78,11 @@ module.exports.getUserInfo = (req, res, next) => {
 };
 
 module.exports.setUserInfo = (req, res, next) => {
-  const { email, name } = req.body;
+  const { oldEmail, email, name } = req.body;
 
-  User.findOne({ email })
+  User.findOne({ email: oldEmail })
     .then((mailedUser) => {
-      if (!mailedUser) {
+      if (mailedUser) {
         User.findByIdAndUpdate(req.user._id, { email, name }, { new: true })
           .then((user) => {
             if (!user) {
@@ -89,7 +90,7 @@ module.exports.setUserInfo = (req, res, next) => {
               error.statusCode = 404;
               next(error);
             } else {
-              res.send({ data: user });
+              res.status(200).send({ data: user });
             }
           })
           .catch((err) => {

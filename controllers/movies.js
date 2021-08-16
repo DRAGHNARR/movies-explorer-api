@@ -22,7 +22,7 @@ module.exports.addUserMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     thumbnail,
     nameRU,
     nameEN,
@@ -37,7 +37,7 @@ module.exports.addUserMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     thumbnail,
     nameRU,
     nameEN,
@@ -56,7 +56,7 @@ module.exports.addUserMovie = (req, res, next) => {
 };
 
 module.exports.removeUserMovie = (req, res, next) => {
-  Movie.findById(req.params.movieSystemId)
+  Movie.findOne({movieId: req.params.movieId})
     .then((movie) => {
       if (!movie) {
         const error = new Error('Картина с указанным _id не найдена.');
@@ -67,7 +67,7 @@ module.exports.removeUserMovie = (req, res, next) => {
         error.statusCode = 403;
         next(error);
       } else {
-        Movie.findByIdAndRemove(req.params.movieSystemId)
+        Movie.findByIdAndRemove(movie._id)
           .then(res.send({ data: movie }))
           .catch(() => {
             const error = new Error('Картина с указанным _id не найдена.');
