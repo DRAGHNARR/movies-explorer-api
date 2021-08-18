@@ -56,7 +56,7 @@ module.exports.addUserMovie = (req, res, next) => {
 };
 
 module.exports.removeUserMovie = (req, res, next) => {
-  Movie.findOne({movieId: req.params.movieId})
+  Movie.findOne({movieId: req.params.movieId, owner: req.user._id})
     .then((movie) => {
       if (!movie) {
         const error = new Error('Картина с указанным _id не найдена.');

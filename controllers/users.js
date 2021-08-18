@@ -82,6 +82,8 @@ module.exports.setUserInfo = (req, res, next) => {
 
   User.findOne({ email: oldEmail })
     .then((mailedUser) => {
+      console.log(oldEmail);
+      console.log(mailedUser);
       if (mailedUser) {
         User.findByIdAndUpdate(req.user._id, { email, name }, { new: true })
           .then((user) => {
